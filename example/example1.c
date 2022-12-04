@@ -7,7 +7,7 @@
 
 #include "wintoastlibc.h"
 
-INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, INT nCmdShow)
+int main(int argc, char ** argv)
 {
     INT ret = EXIT_SUCCESS;
     WTLC_Instance * instance = NULL;
@@ -55,4 +55,9 @@ cleanup:
     WTLC_Instance_Destroy(instance);
     CoUninitialize();
     return ret;
+}
+
+INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, INT nCmdShow)
+{
+    return main(0, NULL);
 }

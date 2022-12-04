@@ -139,7 +139,7 @@ static BOOL RegisterBasicAUMID(LPCWSTR aumid, LPCWSTR displayName, LPCWSTR iconU
     return TRUE;
 }
 
-INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, INT nCmdShow)
+int main(int argc, char ** argv)
 {
     WTLC_Instance * instance = NULL;
     WTLC_Template * templ = NULL;
@@ -204,4 +204,9 @@ INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLin
     WTLC_Instance_Destroy(instance);
     CoUninitialize();
     return 0;
+}
+
+INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, INT nCmdShow)
+{
+    return main(0, NULL);
 }

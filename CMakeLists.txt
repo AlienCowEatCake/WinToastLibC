@@ -30,6 +30,23 @@ set_target_properties(
 )
 
 add_library(
+    wintoastlibc_lazy
+    SHARED
+    ${CMAKE_CURRENT_LIST_DIR}/src/wintoastlibc_lazy.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/wintoastlibc.h
+)
+target_link_libraries(
+    wintoastlibc_lazy
+    kernel32
+)
+set_target_properties(
+    wintoastlibc_lazy
+    PROPERTIES
+    PUBLIC_HEADER
+    "${CMAKE_CURRENT_LIST_DIR}/src/wintoastlibc.h"
+)
+
+add_library(
     wintoastlibc_static
     STATIC
     ${CMAKE_CURRENT_LIST_DIR}/src/wintoastlib.cpp
@@ -73,6 +90,22 @@ target_link_libraries(
 )
 
 add_executable(
+    example1_lazy
+    WIN32
+    ${CMAKE_CURRENT_LIST_DIR}/example/example1.c
+)
+target_include_directories(
+    example1_lazy
+    PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/src
+)
+target_link_libraries(
+    example1_lazy
+    wintoastlibc_lazy
+    ole32
+)
+
+add_executable(
     example2
     WIN32
     ${CMAKE_CURRENT_LIST_DIR}/example/example2.c
@@ -90,7 +123,7 @@ target_link_libraries(
 )
 
 install(
-    TARGETS wintoastlibc wintoastlibc_static example1 example2
+    TARGETS wintoastlibc wintoastlibc_static wintoastlibc_lazy example1 example2 example1_lazy
     RUNTIME DESTINATION ${CMAKE_BINARY_DIR}/install/bin
     ARCHIVE DESTINATION ${CMAKE_BINARY_DIR}/install/lib
     LIBRARY DESTINATION ${CMAKE_BINARY_DIR}/install/lib

@@ -37,7 +37,7 @@
 #endif
 
 #if !defined (WTLCAPI)
-#define WTLCAPI WINAPI
+#define WTLCAPI __cdecl
 #endif
 
 #if !defined (_In_)
