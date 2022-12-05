@@ -42,7 +42,7 @@ gcc example1.c -L. -lwintoastlibc -lole32 -mwindows
 Loader source: [wintoastlibc_lazy.c](src/wintoastlibc_lazy.c)
 ```bash
 gcc -DWTLC_BUILD_STATIC -o wintoastlibc_lazy.o -c wintoastlibc_lazy.c
-ar rcs -o libwintoastlibc.dll.a wintoastlibc_lazy.o
+ar rcs libwintoastlibc.dll.a wintoastlibc_lazy.o
 gcc example1.c -DWTLC_BUILD_STATIC -L. -lwintoastlibc -lole32 -mwindows
 ```
 
