@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 Peter Zhigalov <peter.zhigalov@gmail.com>
+ * Copyright (c) 2022-2023 Peter Zhigalov <peter.zhigalov@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -154,6 +154,39 @@ void WTLCAPI WTLC_Template_setImagePath(_In_ WTLC_Template * toast, _In_ LPCWSTR
     {
         if(toast)
             toast->_.setImagePath(imgPath);
+    }
+    catch(...)
+    {}
+}
+
+void WTLCAPI WTLC_Template_setImagePathWithCropHint(_In_ WTLC_Template * toast, _In_ LPCWSTR imgPath, _In_ WTLC_CropHint cropHint)
+{
+    try
+    {
+        WinToastLib::WinToastTemplate::CropHint _cropHint;
+        switch(cropHint)
+        {
+#define ADD_CASE(X) case WTLC_CropHint_ ##X : _cropHint = WinToastLib::WinToastTemplate:: X ; break
+            ADD_CASE(Square);
+            ADD_CASE(Circle);
+#undef ADD_CASE
+        default:
+            _cropHint = WinToastLib::WinToastTemplate::Square;
+            break;
+        }
+        if(toast)
+            toast->_.setImagePath(imgPath, _cropHint);
+    }
+    catch(...)
+    {}
+}
+
+void WTLCAPI WTLC_Template_setHeroImagePath(_In_ WTLC_Template * toast, _In_ LPCWSTR imgPath, _In_ BOOL inlineImage)
+{
+    try
+    {
+        if(toast)
+            toast->_.setHeroImagePath(imgPath, inlineImage);
     }
     catch(...)
     {}
@@ -344,6 +377,18 @@ BOOL WTLCAPI WTLC_Template_hasImage(_In_ WTLC_Template * toast)
     return FALSE;
 }
 
+BOOL WTLCAPI WTLC_Template_hasHeroImage(_In_ WTLC_Template * toast)
+{
+    try
+    {
+        if(toast)
+            return toast->_.hasHeroImage();
+    }
+    catch(...)
+    {}
+    return FALSE;
+}
+
 LPCWSTR WTLCAPI WTLC_Template_textField(_In_ WTLC_Template * toast, _In_ WTLC_TextField pos)
 {
     try
@@ -386,6 +431,18 @@ LPCWSTR WTLCAPI WTLC_Template_imagePath(_In_ WTLC_Template * toast)
     {
         if(toast)
             return toast->_.imagePath().c_str();
+    }
+    catch(...)
+    {}
+    return NULL;
+}
+
+LPCWSTR WTLCAPI WTLC_Template_heroImagePath(_In_ WTLC_Template * toast)
+{
+    try
+    {
+        if(toast)
+            return toast->_.heroImagePath().c_str();
     }
     catch(...)
     {}
@@ -520,6 +577,42 @@ WTLC_Duration WTLCAPI WTLC_Template_duration(_In_ WTLC_Template * toast)
     return WTLC_Duration_System;
 }
 
+BOOL WTLCAPI WTLC_Template_isToastGeneric(_In_ WTLC_Template * toast)
+{
+    try
+    {
+        if(toast)
+            return toast->_.isToastGeneric();
+    }
+    catch(...)
+    {}
+    return FALSE;
+}
+
+BOOL WTLCAPI WTLC_Template_isInlineHeroImage(_In_ WTLC_Template * toast)
+{
+    try
+    {
+        if(toast)
+            return toast->_.isInlineHeroImage();
+    }
+    catch(...)
+    {}
+    return FALSE;
+}
+
+BOOL WTLCAPI WTLC_Template_isCropHintCircle(_In_ WTLC_Template * toast)
+{
+    try
+    {
+        if(toast)
+            return toast->_.isCropHintCircle();
+    }
+    catch(...)
+    {}
+    return FALSE;
+}
+
 struct _WTLC_Instance
 {
     WinToastLib::WinToast * _;
@@ -568,6 +661,18 @@ BOOL WTLCAPI WTLC_isSupportingModernFeatures()
     try
     {
         return WinToastLib::WinToast::isSupportingModernFeatures();
+    }
+    catch(...)
+    {
+        return FALSE;
+    }
+}
+
+BOOL WTLCAPI WTLC_isWin10AnniversaryOrHigher()
+{
+    try
+    {
+        return WinToastLib::WinToast::isWin10AnniversaryOrHigher();
     }
     catch(...)
     {

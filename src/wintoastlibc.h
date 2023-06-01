@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 Peter Zhigalov <peter.zhigalov@gmail.com>
+ * Copyright (c) 2022-2023 Peter Zhigalov <peter.zhigalov@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -147,6 +147,13 @@ enum _WTLC_AudioSystemFile
 };
 typedef enum _WTLC_AudioSystemFile WTLC_AudioSystemFile;
 
+enum _WTLC_CropHint
+{
+    WTLC_CropHint_Square,
+    WTLC_CropHint_Circle
+};
+typedef enum _WTLC_CropHint WTLC_CropHint;
+
 typedef struct _WTLC_Template WTLC_Template;
 
 WTLC_LIB WTLC_Template * WTLCAPI WTLC_Template_Create(_In_ WTLC_TemplateType type);
@@ -158,6 +165,8 @@ WTLC_LIB void WTLCAPI WTLC_Template_setThirdLine(_In_ WTLC_Template * toast, _In
 WTLC_LIB void WTLCAPI WTLC_Template_setTextField(_In_ WTLC_Template * toast, _In_ LPCWSTR txt, _In_ WTLC_TextField pos);
 WTLC_LIB void WTLCAPI WTLC_Template_setAttributionText(_In_ WTLC_Template * toast, _In_ LPCWSTR attributionText);
 WTLC_LIB void WTLCAPI WTLC_Template_setImagePath(_In_ WTLC_Template * toast, _In_ LPCWSTR imgPath);
+WTLC_LIB void WTLCAPI WTLC_Template_setImagePathWithCropHint(_In_ WTLC_Template * toast, _In_ LPCWSTR imgPath, _In_ WTLC_CropHint cropHint);
+WTLC_LIB void WTLCAPI WTLC_Template_setHeroImagePath(_In_ WTLC_Template * toast, _In_ LPCWSTR imgPath, _In_ BOOL inlineImage);
 WTLC_LIB void WTLCAPI WTLC_Template_setAudioSystemFile(_In_ WTLC_Template * toast, _In_ WTLC_AudioSystemFile audio);
 WTLC_LIB void WTLCAPI WTLC_Template_setAudioPath(_In_ WTLC_Template * toast, _In_ LPCWSTR audioPath);
 WTLC_LIB void WTLCAPI WTLC_Template_setAudioOption(_In_ WTLC_Template * toast, _In_ WTLC_AudioOption audioOption);
@@ -169,9 +178,11 @@ WTLC_LIB void WTLCAPI WTLC_Template_addAction(_In_ WTLC_Template * toast, _In_ L
 WTLC_LIB size_t WTLCAPI WTLC_Template_textFieldsCount(_In_ WTLC_Template * toast);
 WTLC_LIB size_t WTLCAPI WTLC_Template_actionsCount(_In_ WTLC_Template * toast);
 WTLC_LIB BOOL WTLCAPI WTLC_Template_hasImage(_In_ WTLC_Template * toast);
+WTLC_LIB BOOL WTLCAPI WTLC_Template_hasHeroImage(_In_ WTLC_Template * toast);
 WTLC_LIB LPCWSTR WTLCAPI WTLC_Template_textField(_In_ WTLC_Template * toast, _In_ WTLC_TextField pos);
 WTLC_LIB LPCWSTR WTLCAPI WTLC_Template_actionLabel(_In_ WTLC_Template * toast, _In_ size_t pos);
 WTLC_LIB LPCWSTR WTLCAPI WTLC_Template_imagePath(_In_ WTLC_Template * toast);
+WTLC_LIB LPCWSTR WTLCAPI WTLC_Template_heroImagePath(_In_ WTLC_Template * toast);
 WTLC_LIB LPCWSTR WTLCAPI WTLC_Template_audioPath(_In_ WTLC_Template * toast);
 WTLC_LIB LPCWSTR WTLCAPI WTLC_Template_attributionText(_In_ WTLC_Template * toast);
 WTLC_LIB LPCWSTR WTLCAPI WTLC_Template_scenario(_In_ WTLC_Template * toast);
@@ -179,6 +190,9 @@ WTLC_LIB INT64 WTLCAPI WTLC_Template_expiration(_In_ WTLC_Template * toast);
 WTLC_LIB WTLC_TemplateType WTLCAPI WTLC_Template_type(_In_ WTLC_Template * toast);
 WTLC_LIB WTLC_AudioOption WTLCAPI WTLC_Template_audioOption(_In_ WTLC_Template * toast);
 WTLC_LIB WTLC_Duration WTLCAPI WTLC_Template_duration(_In_ WTLC_Template * toast);
+WTLC_LIB BOOL WTLCAPI WTLC_Template_isToastGeneric(_In_ WTLC_Template * toast);
+WTLC_LIB BOOL WTLCAPI WTLC_Template_isInlineHeroImage(_In_ WTLC_Template * toast);
+WTLC_LIB BOOL WTLCAPI WTLC_Template_isCropHintCircle(_In_ WTLC_Template * toast);
 
 enum _WTLC_Error
 {
@@ -221,6 +235,7 @@ WTLC_LIB void WTLCAPI WTLC_Instance_Destroy(_In_ WTLC_Instance * instance);
 
 WTLC_LIB BOOL WTLCAPI WTLC_isCompatible(void);
 WTLC_LIB BOOL WTLCAPI WTLC_isSupportingModernFeatures(void);
+WTLC_LIB BOOL WTLCAPI WTLC_isWin10AnniversaryOrHigher(void);
 WTLC_LIB LPCWSTR WTLCAPI WTLC_strerror(_In_ WTLC_Error error);
 WTLC_LIB BOOL WTLCAPI WTLC_initialize(_In_ WTLC_Instance * instance, _Out_opt_ WTLC_Error * error);
 WTLC_LIB BOOL WTLCAPI WTLC_isInitialized(_In_ WTLC_Instance * instance);
