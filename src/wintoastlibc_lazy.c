@@ -144,33 +144,33 @@ FORWARD1(WTLC_Template_actionsCount, size_t, WTLC_Template *)
 FORWARD1(WTLC_Template_hasImage, BOOL, WTLC_Template *)
 FORWARD1(WTLC_Template_hasHeroImage, BOOL, WTLC_Template *)
 FORWARD2(WTLC_Template_textField, LPCWSTR, WTLC_Template *, WTLC_TextField)
-FORWARD2(WTLC_Template_actionLabel, LPCWSTR, WTLC_Template *, size_t);
-FORWARD1(WTLC_Template_imagePath, LPCWSTR, WTLC_Template *);
-FORWARD1(WTLC_Template_heroImagePath, LPCWSTR, WTLC_Template *);
-FORWARD1(WTLC_Template_audioPath, LPCWSTR, WTLC_Template *);
-FORWARD1(WTLC_Template_attributionText, LPCWSTR, WTLC_Template *);
-FORWARD1(WTLC_Template_scenario, LPCWSTR, WTLC_Template *);
-FORWARD1(WTLC_Template_expiration, INT64, WTLC_Template *);
-FORWARD1(WTLC_Template_type, WTLC_TemplateType, WTLC_Template *);
-FORWARD1(WTLC_Template_audioOption, WTLC_AudioOption, WTLC_Template *);
-FORWARD1(WTLC_Template_duration, WTLC_Duration, WTLC_Template *);
-FORWARD1(WTLC_Template_isToastGeneric, BOOL, WTLC_Template *);
-FORWARD1(WTLC_Template_isInlineHeroImage, BOOL, WTLC_Template *);
-FORWARD1(WTLC_Template_isCropHintCircle, BOOL, WTLC_Template *);
-FORWARD0(WTLC_Instance_Create, WTLC_Instance *);
-FORWARD1NR(WTLC_Instance_Destroy, WTLC_Instance *);
-FORWARD0(WTLC_isCompatible, BOOL);
-FORWARD0(WTLC_isSupportingModernFeatures, BOOL);
-FORWARD0(WTLC_isWin10AnniversaryOrHigher, BOOL);
-FORWARD1(WTLC_strerror, LPCWSTR, WTLC_Error);
-FORWARD2(WTLC_initialize, BOOL, WTLC_Instance *, WTLC_Error *);
-FORWARD1(WTLC_isInitialized, BOOL, WTLC_Instance *);
-FORWARD2(WTLC_hideToast, BOOL, WTLC_Instance *, INT64);
-FORWARD8(WTLC_showToast, INT64, WTLC_Instance *, WTLC_Template *, void *, WTLC_CB_toastActivated, WTLC_CB_toastActivatedAction, WTLC_CB_toastDismissed, WTLC_CB_toastFailed, WTLC_Error *);
-FORWARD1NR(WTLC_clear, WTLC_Instance *);
-FORWARD1(WTLC_createShortcut, WTLC_ShortcutResult, WTLC_Instance *);
-FORWARD1(WTLC_appName, LPCWSTR, WTLC_Instance *);
-FORWARD1(WTLC_appUserModelId, LPCWSTR, WTLC_Instance *);
-FORWARD2NR(WTLC_setAppUserModelId, WTLC_Instance *, LPCWSTR);
-FORWARD2NR(WTLC_setAppName, WTLC_Instance *, LPCWSTR);
-FORWARD2NR(WTLC_setShortcutPolicy, WTLC_Instance *, WTLC_ShortcutPolicy);
+FORWARD2(WTLC_Template_actionLabel, LPCWSTR, WTLC_Template *, size_t)
+FORWARD1(WTLC_Template_imagePath, LPCWSTR, WTLC_Template *)
+FORWARD1(WTLC_Template_heroImagePath, LPCWSTR, WTLC_Template *)
+FORWARD1(WTLC_Template_audioPath, LPCWSTR, WTLC_Template *)
+FORWARD1(WTLC_Template_attributionText, LPCWSTR, WTLC_Template *)
+FORWARD1(WTLC_Template_scenario, LPCWSTR, WTLC_Template *)
+FORWARD1(WTLC_Template_expiration, INT64, WTLC_Template *)
+FORWARD1(WTLC_Template_type, WTLC_TemplateType, WTLC_Template *)
+FORWARD1(WTLC_Template_audioOption, WTLC_AudioOption, WTLC_Template *)
+FORWARD1(WTLC_Template_duration, WTLC_Duration, WTLC_Template *)
+FORWARD1(WTLC_Template_isToastGeneric, BOOL, WTLC_Template *)
+FORWARD1(WTLC_Template_isInlineHeroImage, BOOL, WTLC_Template *)
+FORWARD1(WTLC_Template_isCropHintCircle, BOOL, WTLC_Template *)
+FORWARD0(WTLC_Instance_Create, WTLC_Instance *)
+FORWARD1NR(WTLC_Instance_Destroy, WTLC_Instance *)
+FORWARD0(WTLC_isCompatible, BOOL)
+FORWARD0(WTLC_isSupportingModernFeatures, BOOL)
+FORWARD0(WTLC_isWin10AnniversaryOrHigher, BOOL)
+FORWARD1(WTLC_strerror, LPCWSTR, WTLC_Error)
+FORWARD2(WTLC_initialize, BOOL, WTLC_Instance *, WTLC_Error *)
+FORWARD1(WTLC_isInitialized, BOOL, WTLC_Instance *)
+FORWARD2(WTLC_hideToast, BOOL, WTLC_Instance *, INT64)
+FORWARD8(WTLC_showToast, INT64, WTLC_Instance *, WTLC_Template *, void *, WTLC_CB_toastActivated, WTLC_CB_toastActivatedAction, WTLC_CB_toastDismissed, WTLC_CB_toastFailed, WTLC_Error *)
+FORWARD1NR(WTLC_clear, WTLC_Instance *)
+FORWARD1(WTLC_createShortcut, WTLC_ShortcutResult, WTLC_Instance *)
+FORWARD1(WTLC_appName, LPCWSTR, WTLC_Instance *)
+FORWARD1(WTLC_appUserModelId, LPCWSTR, WTLC_Instance *)
+FORWARD2NR(WTLC_setAppUserModelId, WTLC_Instance *, LPCWSTR)
+FORWARD2NR(WTLC_setAppName, WTLC_Instance *, LPCWSTR)
+FORWARD2NR(WTLC_setShortcutPolicy, WTLC_Instance *, WTLC_ShortcutPolicy)
