@@ -139,41 +139,106 @@ static BOOL RegisterBasicAUMID(LPCWSTR aumid, LPCWSTR displayName, LPCWSTR iconU
     return TRUE;
 }
 
-int main(int argc, char ** argv)
+// Déclarer l'événement global
+HANDLE g_hEvent = NULL;
+
+// Callback functions
+void toastActivated(void *userData) {
+    printf("Toast activated without action.\n");
+    // Signaler que le callback a été appelé
+    if (g_hEvent != NULL) {
+        SetEvent(g_hEvent);
+    }
+}
+
+void toastActivatedAction(void *userData, int actionIndex) {
+    if (actionIndex == 0) {
+        printf("Button 1 clicked.\n");
+    } else if (actionIndex == 1) {
+        printf("Button 2 clicked.\n");
+    } else {
+        printf("Unknown action clicked.\n");
+    }
+    // Signaler que le callback a été appelé
+    if (g_hEvent != NULL) {
+        SetEvent(g_hEvent);
+    }
+}
+
+void toastDismissed(void *userData, WTLC_DismissalReason state) {
+    switch (state) {
+        case WTLC_DismissalReason_UserCanceled:
+            printf("Toast dismissed by user.\n");
+            break;
+        case WTLC_DismissalReason_ApplicationHidden:
+            printf("Toast dismissed by application.\n");
+            break;
+        case WTLC_DismissalReason_TimedOut:
+            printf("Toast timed out.\n");
+            break;
+        default:
+            printf("Toast dismissed with unknown reason.\n");
+            break;
+    }
+    // Signaler que le callback a été appelé
+    if (g_hEvent != NULL) {
+        SetEvent(g_hEvent);
+    }
+}
+
+void toastFailed(void *userData) {
+    printf("Toast failed to display.\n");
+    // Signaler que le callback a été appelé
+    if (g_hEvent != NULL) {
+        SetEvent(g_hEvent);
+    }
+}
+
+INT WINAPI wWinMain()
 {
-    WTLC_Instance * instance = NULL;
-    WTLC_Template * templ = NULL;
+    AllocConsole();
+    FILE* pCout;
+    freopen_s(&pCout, "CONOUT$", "w", stdout);
+
+    WTLC_Instance *instance = NULL;
+    WTLC_Template *templ = NULL;
     WTLC_Error error = WTLC_Error_NoError;
     LPCWSTR imagePath = L"C:\\ProgramData\\Microsoft\\User Account Pictures\\guest.png";
     BOOL withImage = PathFileExistsW(imagePath);
 
-    if(!WTLC_isCompatible())
+    if (!WTLC_isCompatible())
     {
         MessageBoxW(NULL, L"Your system is not compatible!", L"Error", MB_OK | MB_ICONERROR);
         return EXIT_FAILURE;
     }
 
-    CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+    if (FAILED(hr))
+    {
+        MessageBoxW(NULL, L"Failed to initialize COM library!", L"Error", MB_OK | MB_ICONERROR);
+        return EXIT_FAILURE;
+    }
+
     instance = WTLC_Instance_Create();
-    if(!instance)
+    if (!instance)
     {
         MessageBoxW(NULL, L"WinToast instance creation failed!", L"Error", MB_OK | MB_ICONERROR);
         CoUninitialize();
         return EXIT_FAILURE;
     }
 
-    WTLC_setAppName(instance, L"Example");
-    if(ShortcutAUMIDRequired())
+    WTLC_setAppName(instance, L"NotificationExample");
+    if (ShortcutAUMIDRequired())
         WTLC_setAppUserModelId(instance, L"Microsoft.Windows.Explorer");
-    else if(RegisterBasicAUMID(L"ExampleToast", L"Example", imagePath))
-        WTLC_setAppUserModelId(instance, L"ExampleToast");
-    else if(ValidAUMIDRequired())
+    else if (RegisterBasicAUMID(L"ExampleToast", L"NotificationExample", imagePath))
+        WTLC_setAppUserModelId(instance, L"ExampleToast2");
+    else if (ValidAUMIDRequired())
         WTLC_setAppUserModelId(instance, L"Microsoft.Windows.Explorer");
     else
-        WTLC_setAppUserModelId(instance, L"Example");
+        WTLC_setAppUserModelId(instance, L"NotificationExample");
     WTLC_setShortcutPolicy(instance, WTLC_SHORTCUT_POLICY_IGNORE);
 
-    if(!WTLC_initialize(instance, &error))
+    if (!WTLC_initialize(instance, &error))
     {
         MessageBoxW(NULL, WTLC_strerror(error), L"Error", MB_OK | MB_ICONERROR);
         WTLC_Instance_Destroy(instance);
@@ -182,14 +247,29 @@ int main(int argc, char ** argv)
     }
 
     templ = WTLC_Template_Create(withImage ? WTLC_TemplateType_ImageAndText02 : WTLC_TemplateType_Text02);
-    WTLC_Template_setTextField(templ, L"HELLO, WORLD!", WTLC_TextField_FirstLine);
-    WTLC_Template_setSecondLine(templ, L"This is a test notification");
+    WTLC_Template_setTextField(templ, L"Hello, World!", WTLC_TextField_FirstLine);
+    WTLC_Template_setSecondLine(templ, L"This is a notification with an icon and an image.");
     WTLC_Template_setAudioOption(templ, WTLC_AudioOption_Default);
     WTLC_Template_setExpiration(templ, 30000);
-    if(withImage)
+    if (withImage)
         WTLC_Template_setImagePath(templ, imagePath);
 
-    if(WTLC_showToast(instance, templ, NULL, NULL, NULL, NULL, NULL, &error) < 0)
+    // Ajouter des actions
+    WTLC_Template_addAction(templ, L"Button 1");
+    WTLC_Template_addAction(templ, L"Button 2");
+
+    // Initialiser l'événement
+    g_hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+    if (g_hEvent == NULL) {
+        MessageBoxW(NULL, L"Failed to create event!", L"Error", MB_OK | MB_ICONERROR);
+        WTLC_Template_Destroy(templ);
+        WTLC_Instance_Destroy(instance);
+        CoUninitialize();
+        return EXIT_FAILURE;
+    }
+
+    // Afficher la notification avec les callbacks corrects
+    if (WTLC_showToast(instance, templ, NULL, toastActivated, toastActivatedAction, toastDismissed, toastFailed, &error) < 0)
     {
         MessageBoxW(NULL, WTLC_strerror(error), L"Error", MB_OK | MB_ICONERROR);
         WTLC_Template_Destroy(templ);
@@ -198,15 +278,68 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
     }
 
-    Sleep(1000);
+    // Boucle de messages standard
+    MSG msg;
+    DWORD dwStartTime = GetTickCount();
+    DWORD dwTimeout = 31000; // 31 secondes
+    BOOL bDone = FALSE;
+
+    while (!bDone)
+    {
+        DWORD dwElapsedTime = GetTickCount() - dwStartTime;
+        if (dwElapsedTime >= dwTimeout)
+        {
+            printf("Timeout reached. Exiting...\n");
+            break;
+        }
+
+        DWORD dwWaitTime = dwTimeout - dwElapsedTime;
+
+        // Utiliser MsgWaitForMultipleObjects pour attendre les messages ou l'événement
+        DWORD waitResult = MsgWaitForMultipleObjects(1, &g_hEvent, FALSE, dwWaitTime, QS_ALLINPUT);
+
+        if (waitResult == WAIT_OBJECT_0)
+        {
+            // L'événement a été signalé
+            printf("Callback called. Exiting...\n");
+            bDone = TRUE;
+        }
+        else if (waitResult == WAIT_OBJECT_0 + 1)
+        {
+            // Il y a des messages dans la file d'attente
+            while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+            {
+                if (msg.message == WM_QUIT)
+                {
+                    bDone = TRUE;
+                    break;
+                }
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
+            }
+        }
+        else if (waitResult == WAIT_TIMEOUT)
+        {
+            printf("Timeout reached. Exiting...\n");
+            bDone = TRUE;
+        }
+        else
+        {
+            // Une erreur s'est produite
+            printf("Wait failed with error %lu. Exiting...\n", GetLastError());
+            bDone = TRUE;
+        }
+    }
+
+    // Nettoyer les ressources
+    if (g_hEvent != NULL)
+    {
+        CloseHandle(g_hEvent);
+        g_hEvent = NULL;
+    }
 
     WTLC_Template_Destroy(templ);
     WTLC_Instance_Destroy(instance);
     CoUninitialize();
-    return 0;
-}
-
-INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, INT nCmdShow)
-{
-    return main(0, NULL);
+    return EXIT_SUCCESS;
 }
