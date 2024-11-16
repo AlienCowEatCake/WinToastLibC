@@ -13,19 +13,19 @@
 
 #define RETURN_GREATER_OR_EQUAL(osvi, major, minor, build) \
     do { \
-    if((osvi).dwMajorVersion > (major)) \
-    return TRUE; \
-    if((osvi).dwMajorVersion < (major)) \
-    return FALSE; \
-    if((osvi).dwMinorVersion > (minor)) \
-    return TRUE; \
-    if((osvi).dwMinorVersion < (minor)) \
-    return FALSE; \
-    if((osvi).dwBuildNumber > (build)) \
-    return TRUE; \
-    if((osvi).dwBuildNumber < (build)) \
-    return FALSE; \
-    return TRUE; \
+        if((osvi).dwMajorVersion > (major)) \
+            return TRUE; \
+        if((osvi).dwMajorVersion < (major)) \
+            return FALSE; \
+        if((osvi).dwMinorVersion > (minor)) \
+            return TRUE; \
+        if((osvi).dwMinorVersion < (minor)) \
+            return FALSE; \
+        if((osvi).dwBuildNumber > (build)) \
+            return TRUE; \
+        if((osvi).dwBuildNumber < (build)) \
+            return FALSE; \
+        return TRUE; \
     } while(0)
 
 static BOOL GreaterOrEqualRTL(DWORD major, DWORD minor, DWORD build)
@@ -153,7 +153,12 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
     }
 
-    CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+    if(FAILED(CoInitializeEx(NULL, COINIT_APARTMENTTHREADED)))
+    {
+        MessageBoxW(NULL, L"COM library initialization failed!", L"Error", MB_OK | MB_ICONERROR);
+        return EXIT_FAILURE;
+    }
+
     instance = WTLC_Instance_Create();
     if(!instance)
     {
@@ -203,7 +208,7 @@ int main(int argc, char ** argv)
     WTLC_Template_Destroy(templ);
     WTLC_Instance_Destroy(instance);
     CoUninitialize();
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 INT WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, INT nCmdShow)

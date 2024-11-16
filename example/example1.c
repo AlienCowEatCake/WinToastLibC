@@ -20,7 +20,12 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
     }
 
-    CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+    if(FAILED(CoInitializeEx(NULL, COINIT_APARTMENTTHREADED)))
+    {
+        MessageBoxW(NULL, L"COM library initialization failed!", L"Error", MB_OK | MB_ICONERROR);
+        return EXIT_FAILURE;
+    }
+
     instance = WTLC_Instance_Create();
     if(!instance)
     {
