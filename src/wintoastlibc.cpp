@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 Peter Zhigalov <peter.zhigalov@gmail.com>
+ * Copyright (c) 2022-2024 Peter Zhigalov <peter.zhigalov@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,11 +35,17 @@
 
 struct _WTLC_Template
 {
-    WinToastLib::WinToastTemplate _;
-
     _WTLC_Template(WinToastLib::WinToastTemplate::WinToastTemplateType type)
-        : _(type)
+        : _template(type)
     {}
+
+    inline WinToastLib::WinToastTemplate & data()
+    {
+        return _template;
+    }
+
+private:
+    WinToastLib::WinToastTemplate _template;
 };
 
 WTLC_Template * WTLCAPI WTLC_Template_Create(_In_ WTLC_TemplateType type)
@@ -86,7 +92,7 @@ void WTLCAPI WTLC_Template_setFirstLine(_In_ WTLC_Template * toast, _In_ LPCWSTR
     try
     {
         if(toast)
-            toast->_.setFirstLine(text);
+            toast->data().setFirstLine(text);
     }
     catch(...)
     {}
@@ -97,7 +103,7 @@ void WTLCAPI WTLC_Template_setSecondLine(_In_ WTLC_Template * toast, _In_ LPCWST
     try
     {
         if(toast)
-            toast->_.setSecondLine(text);
+            toast->data().setSecondLine(text);
     }
     catch(...)
     {}
@@ -108,7 +114,7 @@ void WTLCAPI WTLC_Template_setThirdLine(_In_ WTLC_Template * toast, _In_ LPCWSTR
     try
     {
         if(toast)
-            toast->_.setThirdLine(text);
+            toast->data().setThirdLine(text);
     }
     catch(...)
     {}
@@ -131,7 +137,7 @@ void WTLCAPI WTLC_Template_setTextField(_In_ WTLC_Template * toast, _In_ LPCWSTR
             break;
         }
         if(toast)
-            toast->_.setTextField(txt, _pos);
+            toast->data().setTextField(txt, _pos);
     }
     catch(...)
     {}
@@ -142,7 +148,7 @@ void WTLCAPI WTLC_Template_setAttributionText(_In_ WTLC_Template * toast, _In_ L
     try
     {
         if(toast)
-            toast->_.setAttributionText(attributionText);
+            toast->data().setAttributionText(attributionText);
     }
     catch(...)
     {}
@@ -153,7 +159,7 @@ void WTLCAPI WTLC_Template_setImagePath(_In_ WTLC_Template * toast, _In_ LPCWSTR
     try
     {
         if(toast)
-            toast->_.setImagePath(imgPath);
+            toast->data().setImagePath(imgPath);
     }
     catch(...)
     {}
@@ -175,7 +181,7 @@ void WTLCAPI WTLC_Template_setImagePathWithCropHint(_In_ WTLC_Template * toast, 
             break;
         }
         if(toast)
-            toast->_.setImagePath(imgPath, _cropHint);
+            toast->data().setImagePath(imgPath, _cropHint);
     }
     catch(...)
     {}
@@ -186,7 +192,7 @@ void WTLCAPI WTLC_Template_setHeroImagePath(_In_ WTLC_Template * toast, _In_ LPC
     try
     {
         if(toast)
-            toast->_.setHeroImagePath(imgPath, inlineImage);
+            toast->data().setHeroImagePath(imgPath, inlineImage);
     }
     catch(...)
     {}
@@ -232,7 +238,7 @@ void WTLCAPI WTLC_Template_setAudioSystemFile(_In_ WTLC_Template * toast, _In_ W
             break;
         }
         if(toast)
-            toast->_.setAudioPath(_audio);
+            toast->data().setAudioPath(_audio);
     }
     catch(...)
     {}
@@ -243,7 +249,7 @@ void WTLCAPI WTLC_Template_setAudioPath(_In_ WTLC_Template * toast, _In_ LPCWSTR
     try
     {
         if(toast)
-            toast->_.setAudioPath(audioPath);
+            toast->data().setAudioPath(audioPath);
     }
     catch(...)
     {}
@@ -266,7 +272,7 @@ void WTLCAPI WTLC_Template_setAudioOption(_In_ WTLC_Template * toast, _In_ WTLC_
             break;
         }
         if(toast)
-            toast->_.setAudioOption(_audioOption);
+            toast->data().setAudioOption(_audioOption);
     }
     catch(...)
     {}
@@ -289,7 +295,7 @@ void WTLCAPI WTLC_Template_setDuration(_In_ WTLC_Template * toast, _In_ WTLC_Dur
             break;
         }
         if(toast)
-            toast->_.setDuration(_duration);
+            toast->data().setDuration(_duration);
     }
     catch(...)
     {}
@@ -300,7 +306,7 @@ void WTLCAPI WTLC_Template_setExpiration(_In_ WTLC_Template * toast, _In_ INT64 
     try
     {
         if(toast)
-            toast->_.setExpiration(millisecondsFromNow);
+            toast->data().setExpiration(millisecondsFromNow);
     }
     catch(...)
     {}
@@ -324,7 +330,7 @@ void WTLCAPI WTLC_Template_setScenario(_In_ WTLC_Template * toast, _In_ WTLC_Sce
             break;
         }
         if(toast)
-            toast->_.setScenario(_scenario);
+            toast->data().setScenario(_scenario);
     }
     catch(...)
     {}
@@ -335,7 +341,7 @@ void WTLCAPI WTLC_Template_addAction(_In_ WTLC_Template * toast, _In_ LPCWSTR la
     try
     {
         if(toast)
-            toast->_.addAction(label);
+            toast->data().addAction(label);
     }
     catch(...)
     {}
@@ -346,7 +352,7 @@ size_t WTLCAPI WTLC_Template_textFieldsCount(_In_ WTLC_Template * toast)
     try
     {
         if(toast)
-            return toast->_.textFieldsCount();
+            return toast->data().textFieldsCount();
     }
     catch(...)
     {}
@@ -358,7 +364,7 @@ size_t WTLCAPI WTLC_Template_actionsCount(_In_ WTLC_Template * toast)
     try
     {
         if(toast)
-            return toast->_.actionsCount();
+            return toast->data().actionsCount();
     }
     catch(...)
     {}
@@ -370,7 +376,7 @@ BOOL WTLCAPI WTLC_Template_hasImage(_In_ WTLC_Template * toast)
     try
     {
         if(toast)
-            return toast->_.hasImage();
+            return toast->data().hasImage();
     }
     catch(...)
     {}
@@ -382,7 +388,7 @@ BOOL WTLCAPI WTLC_Template_hasHeroImage(_In_ WTLC_Template * toast)
     try
     {
         if(toast)
-            return toast->_.hasHeroImage();
+            return toast->data().hasHeroImage();
     }
     catch(...)
     {}
@@ -406,7 +412,7 @@ LPCWSTR WTLCAPI WTLC_Template_textField(_In_ WTLC_Template * toast, _In_ WTLC_Te
             break;
         }
         if(toast)
-            return toast->_.textField(_pos).c_str();
+            return toast->data().textField(_pos).c_str();
     }
     catch(...)
     {}
@@ -418,7 +424,7 @@ LPCWSTR WTLCAPI WTLC_Template_actionLabel(_In_ WTLC_Template * toast, _In_ size_
     try
     {
         if(toast)
-            return toast->_.actionLabel(pos).c_str();
+            return toast->data().actionLabel(pos).c_str();
     }
     catch(...)
     {}
@@ -430,7 +436,7 @@ LPCWSTR WTLCAPI WTLC_Template_imagePath(_In_ WTLC_Template * toast)
     try
     {
         if(toast)
-            return toast->_.imagePath().c_str();
+            return toast->data().imagePath().c_str();
     }
     catch(...)
     {}
@@ -442,7 +448,7 @@ LPCWSTR WTLCAPI WTLC_Template_heroImagePath(_In_ WTLC_Template * toast)
     try
     {
         if(toast)
-            return toast->_.heroImagePath().c_str();
+            return toast->data().heroImagePath().c_str();
     }
     catch(...)
     {}
@@ -454,7 +460,7 @@ LPCWSTR WTLCAPI WTLC_Template_audioPath(_In_ WTLC_Template * toast)
     try
     {
         if(toast)
-            return toast->_.audioPath().c_str();
+            return toast->data().audioPath().c_str();
     }
     catch(...)
     {}
@@ -466,7 +472,7 @@ LPCWSTR WTLCAPI WTLC_Template_attributionText(_In_ WTLC_Template * toast)
     try
     {
         if(toast)
-            return toast->_.attributionText().c_str();
+            return toast->data().attributionText().c_str();
     }
     catch(...)
     {}
@@ -478,7 +484,7 @@ LPCWSTR WTLCAPI WTLC_Template_scenario(_In_ WTLC_Template * toast)
     try
     {
         if(toast)
-            return toast->_.scenario().c_str();
+            return toast->data().scenario().c_str();
     }
     catch(...)
     {}
@@ -490,7 +496,7 @@ INT64 WTLCAPI WTLC_Template_expiration(_In_ WTLC_Template * toast)
     try
     {
         if(toast)
-            return toast->_.expiration();
+            return toast->data().expiration();
     }
     catch(...)
     {}
@@ -503,7 +509,7 @@ WTLC_TemplateType WTLCAPI WTLC_Template_type(_In_ WTLC_Template * toast)
     {
         if(toast)
         {
-            WinToastLib::WinToastTemplate::WinToastTemplateType result = toast->_.type();
+            WinToastLib::WinToastTemplate::WinToastTemplateType result = toast->data().type();
             switch(result)
             {
 #define ADD_CASE(X) case WinToastLib::WinToastTemplate:: X : return WTLC_TemplateType_ ##X
@@ -533,7 +539,7 @@ WTLC_AudioOption WTLCAPI WTLC_Template_audioOption(_In_ WTLC_Template * toast)
     {
         if(toast)
         {
-            WinToastLib::WinToastTemplate::AudioOption result = toast->_.audioOption();
+            WinToastLib::WinToastTemplate::AudioOption result = toast->data().audioOption();
             switch(result)
             {
 #define ADD_CASE(X) case WinToastLib::WinToastTemplate:: X : return WTLC_AudioOption_ ##X
@@ -558,7 +564,7 @@ WTLC_Duration WTLCAPI WTLC_Template_duration(_In_ WTLC_Template * toast)
     {
         if(toast)
         {
-            WinToastLib::WinToastTemplate::Duration result = toast->_.duration();
+            WinToastLib::WinToastTemplate::Duration result = toast->data().duration();
             switch(result)
             {
 #define ADD_CASE(X) case WinToastLib::WinToastTemplate:: X : return WTLC_Duration_ ##X
@@ -582,7 +588,7 @@ BOOL WTLCAPI WTLC_Template_isToastGeneric(_In_ WTLC_Template * toast)
     try
     {
         if(toast)
-            return toast->_.isToastGeneric();
+            return toast->data().isToastGeneric();
     }
     catch(...)
     {}
@@ -594,7 +600,7 @@ BOOL WTLCAPI WTLC_Template_isInlineHeroImage(_In_ WTLC_Template * toast)
     try
     {
         if(toast)
-            return toast->_.isInlineHeroImage();
+            return toast->data().isInlineHeroImage();
     }
     catch(...)
     {}
@@ -606,7 +612,7 @@ BOOL WTLCAPI WTLC_Template_isCropHintCircle(_In_ WTLC_Template * toast)
     try
     {
         if(toast)
-            return toast->_.isCropHintCircle();
+            return toast->data().isCropHintCircle();
     }
     catch(...)
     {}
@@ -615,18 +621,23 @@ BOOL WTLCAPI WTLC_Template_isCropHintCircle(_In_ WTLC_Template * toast)
 
 struct _WTLC_Instance
 {
-    WinToastLib::WinToast * _;
-
-    _WTLC_Instance(WinToastLib::WinToast * _)
-        : _(_)
+    _WTLC_Instance()
     {}
+
+    inline WinToastLib::WinToast & data()
+    {
+        return _instance;
+    }
+
+private:
+    WinToastLib::WinToast _instance;
 };
 
 WTLC_Instance * WTLCAPI WTLC_Instance_Create()
 {
     try
     {
-        return new WTLC_Instance(WinToastLib::WinToast::instance());
+        return new WTLC_Instance();
     }
     catch(...)
     {
@@ -742,7 +753,7 @@ BOOL WTLCAPI WTLC_initialize(_In_ WTLC_Instance * instance, _Out_opt_ WTLC_Error
             return FALSE;
         }
         WinToastLib::WinToast::WinToastError _error = WinToastLib::WinToast::NoError;
-        const BOOL result = instance->_->initialize(&_error);
+        const BOOL result = instance->data().initialize(&_error);
         if(error)
             *error = convertError(_error);
         return result;
@@ -760,7 +771,7 @@ BOOL WTLCAPI WTLC_isInitialized(_In_ WTLC_Instance * instance)
     try
     {
         if(instance)
-            return instance->_->isInitialized();
+            return instance->data().isInitialized();
     }
     catch(...)
     {}
@@ -772,7 +783,7 @@ BOOL WTLCAPI WTLC_hideToast(_In_ WTLC_Instance * instance, _In_ INT64 id)
     try
     {
         if(instance)
-            return instance->_->hideToast(id);
+            return instance->data().hideToast(id);
     }
     catch(...)
     {}
@@ -857,7 +868,7 @@ INT64 WTLCAPI WTLC_showToast(_In_ WTLC_Instance * instance,
         {
             WinToastLib::WinToast::WinToastError _error = WinToastLib::WinToast::NoError;
             CustomHandler * handler = new CustomHandler(userData, toastActivated, toastActivatedAction, toastDismissed, toastFailed);
-            const INT64 result = instance->_->showToast(toast->_, handler, &_error);
+            const INT64 result = instance->data().showToast(toast->data(), handler, &_error);
             if(error)
                 *error = convertError(_error);
             return result;
@@ -873,7 +884,7 @@ void WTLCAPI WTLC_clear(_In_ WTLC_Instance * instance)
     try
     {
         if(instance)
-            instance->_->clear();
+            instance->data().clear();
     }
     catch(...)
     {}
@@ -885,7 +896,7 @@ WTLC_ShortcutResult WTLCAPI WTLC_createShortcut(_In_ WTLC_Instance * instance)
     {
         if(!instance)
             return WTLC_SHORTCUT_MISSING_PARAMETERS;
-        const WinToastLib::WinToast::ShortcutResult result = instance->_->createShortcut();
+        const WinToastLib::WinToast::ShortcutResult result = instance->data().createShortcut();
         switch(result)
         {
 #define ADD_CASE(X) case WinToastLib::WinToast:: X : return WTLC_ ##X
@@ -911,7 +922,7 @@ LPCWSTR WTLCAPI WTLC_appName(_In_ WTLC_Instance * instance)
     try
     {
         if(instance)
-            return instance->_->appName().c_str();
+            return instance->data().appName().c_str();
     }
     catch(...)
     {}
@@ -923,7 +934,7 @@ LPCWSTR WTLCAPI WTLC_appUserModelId(_In_ WTLC_Instance * instance)
     try
     {
         if(instance)
-            return instance->_->appUserModelId().c_str();
+            return instance->data().appUserModelId().c_str();
     }
     catch(...)
     {}
@@ -935,7 +946,7 @@ void WTLCAPI WTLC_setAppUserModelId(_In_ WTLC_Instance * instance, _In_ LPCWSTR 
     try
     {
         if(instance)
-            return instance->_->setAppUserModelId(aumi);
+            return instance->data().setAppUserModelId(aumi);
     }
     catch(...)
     {}
@@ -946,7 +957,7 @@ void WTLCAPI WTLC_setAppName(_In_ WTLC_Instance * instance, _In_ LPCWSTR appName
     try
     {
         if(instance)
-            return instance->_->setAppName(appName);
+            return instance->data().setAppName(appName);
     }
     catch(...)
     {}
@@ -970,7 +981,7 @@ void WTLCAPI WTLC_setShortcutPolicy(_In_ WTLC_Instance * instance, _In_ WTLC_Sho
             _policy = static_cast<WinToastLib::WinToast::ShortcutPolicy>(policy);
             break;
         }
-        instance->_->setShortcutPolicy(_policy);
+        instance->data().setShortcutPolicy(_policy);
     }
     catch(...)
     {}
