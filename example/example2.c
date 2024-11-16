@@ -8,6 +8,7 @@
 
 #include <Windows.h>
 #include <Shlwapi.h>
+#include <strsafe.h>
 
 #include "wintoastlibc.h"
 
@@ -139,6 +140,57 @@ static BOOL RegisterBasicAUMID(LPCWSTR aumid, LPCWSTR displayName, LPCWSTR iconU
     return TRUE;
 }
 
+typedef struct _ToastHandlerContext
+{
+    HANDLE event;
+    WCHAR message[128];
+} ToastHandlerContext;
+
+static void WTLCAPI OnToastActivated(void * userData)
+{
+    ToastHandlerContext * ctx = (ToastHandlerContext *)(userData);
+    StringCbCopyW(ctx->message, sizeof(ctx->message), L"Toast Activated");
+    SetEvent(ctx->event);
+}
+
+static void WTLCAPI OnToastActivatedAction(void * userData, int actionIndex)
+{
+    ToastHandlerContext * ctx = (ToastHandlerContext *)(userData);
+    StringCbPrintfW(ctx->message, sizeof(ctx->message), L"Toast Activated with Action #%d", actionIndex);
+    SetEvent(ctx->event);
+}
+
+static void WTLCAPI OnToastDismissed(void * userData, WTLC_DismissalReason state)
+{
+    ToastHandlerContext * ctx = (ToastHandlerContext *)(userData);
+    WCHAR reason[32];
+    switch(state)
+    {
+    case WTLC_DismissalReason_UserCanceled:
+        StringCbCopyW(reason, sizeof(reason), L"UserCanceled");
+        break;
+    case WTLC_DismissalReason_ApplicationHidden:
+        StringCbCopyW(reason, sizeof(reason), L"ApplicationHidden");
+        break;
+    case WTLC_DismissalReason_TimedOut:
+        StringCbCopyW(reason, sizeof(reason), L"TimedOut");
+        break;
+    default:
+        StringCbPrintfW(reason, sizeof(reason), L"Invalid (%d)", state);
+        break;
+    }
+    StringCbCopyW(ctx->message, sizeof(ctx->message), L"Toast Dismissed with DismissalReason = ");
+    StringCbCatW(ctx->message, sizeof(ctx->message), reason);
+    SetEvent(ctx->event);
+}
+
+static void WTLCAPI OnToastFailed(void * userData)
+{
+    ToastHandlerContext * ctx = (ToastHandlerContext *)(userData);
+    StringCbCopyW(ctx->message, sizeof(ctx->message), L"Toast Failed");
+    SetEvent(ctx->event);
+}
+
 int main(int argc, char ** argv)
 {
     WTLC_Instance * instance = NULL;
@@ -146,6 +198,9 @@ int main(int argc, char ** argv)
     WTLC_Error error = WTLC_Error_NoError;
     LPCWSTR imagePath = L"C:\\ProgramData\\Microsoft\\User Account Pictures\\guest.png";
     BOOL withImage = PathFileExistsW(imagePath);
+    ToastHandlerContext handlerContext;
+    const ULONGLONG loopTimeout = 31000; /* 31 seconds */
+    ULONGLONG loopStartTime;
 
     if(!WTLC_isCompatible())
     {
@@ -193,18 +248,112 @@ int main(int argc, char ** argv)
     WTLC_Template_setExpiration(templ, 30000);
     if(withImage)
         WTLC_Template_setImagePath(templ, imagePath);
+    WTLC_Template_addAction(templ, L"Action #0");
+    WTLC_Template_addAction(templ, L"Action #1");
 
-    if(WTLC_showToast(instance, templ, NULL, NULL, NULL, NULL, NULL, &error) < 0)
+    ZeroMemory(&handlerContext, sizeof(handlerContext));
+    handlerContext.event = CreateEventW(NULL, TRUE, FALSE, NULL);
+    if(!handlerContext.event)
     {
-        MessageBoxW(NULL, WTLC_strerror(error), L"Error", MB_OK | MB_ICONERROR);
+        const DWORD lastError = GetLastError();
+        LPWSTR lastErrorMsgBuf = NULL;
+        FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                       NULL, lastError, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPWSTR)&lastErrorMsgBuf, 0, NULL);
+        MessageBoxW(NULL, lastErrorMsgBuf, L"Error", MB_OK | MB_ICONERROR);
+        LocalFree(lastErrorMsgBuf);
         WTLC_Template_Destroy(templ);
         WTLC_Instance_Destroy(instance);
         CoUninitialize();
         return EXIT_FAILURE;
     }
 
-    Sleep(1000);
+    if(WTLC_showToast(instance,
+                      templ,
+                      &handlerContext,
+                      &OnToastActivated,
+                      &OnToastActivatedAction,
+                      &OnToastDismissed,
+                      &OnToastFailed,
+                      &error) < 0)
+    {
+        MessageBoxW(NULL, WTLC_strerror(error), L"Error", MB_OK | MB_ICONERROR);
+        CloseHandle(handlerContext.event);
+        WTLC_Template_Destroy(templ);
+        WTLC_Instance_Destroy(instance);
+        CoUninitialize();
+        return EXIT_FAILURE;
+    }
 
+    loopStartTime = GetTickCount64();
+    while(TRUE)
+    {
+        const ULONGLONG loopElapsedTime = GetTickCount64() - loopStartTime;
+        DWORD waitTime = 0;
+        DWORD waitResult = 0;
+
+        if(loopElapsedTime >= loopTimeout)
+        {
+            MessageBoxW(NULL, L"Timeout was reached without callback", L"Error", MB_OK | MB_ICONERROR);
+            break;
+        }
+
+        waitTime = (DWORD)(loopTimeout - loopElapsedTime);
+
+        /* Use MsgWaitForMultipleObjects to wait for messages or event */
+        waitResult = MsgWaitForMultipleObjects(1, &handlerContext.event, FALSE, waitTime, QS_ALLINPUT);
+
+        if(waitResult == WAIT_OBJECT_0)
+        {
+            /* Event object is signaled */
+            WCHAR message[192];
+            StringCbCopyW(message, sizeof(message), L"Callback was called with message:\n\n");
+            StringCbCatW(message, sizeof(message), handlerContext.message);
+            MessageBoxW(NULL, message, L"Handler", MB_OK | MB_ICONASTERISK);
+            break;
+        }
+        else if(waitResult == WAIT_OBJECT_0 + 1)
+        {
+            /* There are messages in queue */
+            BOOL loopIsDone = FALSE;
+            MSG msg;
+            while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+            {
+                if(msg.message == WM_QUIT)
+                {
+                    loopIsDone = TRUE;
+                    break;
+                }
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
+            }
+            if(loopIsDone)
+                break;
+        }
+        else if(waitResult == WAIT_TIMEOUT)
+        {
+            MessageBoxW(NULL, L"Timeout was reached without callback", L"Error", MB_OK | MB_ICONERROR);
+            break;
+        }
+        else if(waitResult == WAIT_FAILED)
+        {
+            const DWORD lastError = GetLastError();
+            LPWSTR lastErrorMsgBuf = NULL;
+            FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+                           NULL, lastError, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPWSTR)&lastErrorMsgBuf, 0, NULL);
+            MessageBoxW(NULL, lastErrorMsgBuf, L"Error", MB_OK | MB_ICONERROR);
+            LocalFree(lastErrorMsgBuf);
+            break;
+        }
+        else
+        {
+            WCHAR message[64];
+            StringCbPrintfW(message, sizeof(message), L"Unexpected waitResult = 0x%08lX", waitResult);
+            MessageBoxW(NULL, message, L"Error", MB_OK | MB_ICONERROR);
+            break;
+        }
+    }
+
+    CloseHandle(handlerContext.event);
     WTLC_Template_Destroy(templ);
     WTLC_Instance_Destroy(instance);
     CoUninitialize();

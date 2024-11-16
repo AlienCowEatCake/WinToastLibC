@@ -6,7 +6,7 @@ Since this project is just bindings, documentation can be found in [WinToast](ht
 
 ## Examples
 * [example1.c](example/example1.c): minimal C code to show the toast notification
-* [example2.c](example/example2.c): more complex example with image and basic AUMID registration
+* [example2.c](example/example2.c): more complex example with image and basic AUMID registration and events handling
 
 ## MinGW integration
 
