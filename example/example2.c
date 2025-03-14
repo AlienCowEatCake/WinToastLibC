@@ -131,9 +131,9 @@ static BOOL RegisterBasicAUMID(LPCWSTR aumid, LPCWSTR displayName, LPCWSTR iconU
     }
 
     if(RegQueryValueExW(aumidKey, L"DisplayName", 0, &type, NULL, NULL) != ERROR_SUCCESS || type != REG_SZ)
-        RegSetValueExW(aumidKey, L"DisplayName", 0, REG_SZ, (LPBYTE)displayName, (wcslen(displayName) + 1) * sizeof(wchar_t));
+        RegSetValueExW(aumidKey, L"DisplayName", 0, REG_SZ, (LPBYTE)displayName, (DWORD)((wcslen(displayName) + 1) * sizeof(wchar_t)));
     if(RegQueryValueExW(aumidKey, L"IconUri", 0, &type, NULL, NULL) != ERROR_SUCCESS || type != REG_SZ)
-        RegSetValueExW(aumidKey, L"IconUri", 0, REG_SZ, (LPBYTE)iconUri, (wcslen(iconUri) + 1) * sizeof(wchar_t));
+        RegSetValueExW(aumidKey, L"IconUri", 0, REG_SZ, (LPBYTE)iconUri, (DWORD)((wcslen(iconUri) + 1) * sizeof(wchar_t)));
 
     RegCloseKey(aumidKey);
     RegCloseKey(aumidRoot);
@@ -157,6 +157,21 @@ static void WTLCAPI OnToastActivatedAction(void * userData, int actionIndex)
 {
     ToastHandlerContext * ctx = (ToastHandlerContext *)(userData);
     StringCbPrintfW(ctx->message, sizeof(ctx->message), L"Toast Activated with Action #%d", actionIndex);
+    SetEvent(ctx->event);
+}
+
+static void WTLCAPI OnToastActivatedInput(void * userData, LPCWSTR response)
+{
+    ToastHandlerContext * ctx = (ToastHandlerContext *)(userData);
+    if(response)
+    {
+        StringCbCopyW(ctx->message, sizeof(ctx->message), L"Toast Activated with Input: ");
+        StringCbCatW(ctx->message, sizeof(ctx->message), response);
+    }
+    else
+    {
+        StringCbCatW(ctx->message, sizeof(ctx->message), L"Toast Activated with NULL Input");
+    }
     SetEvent(ctx->event);
 }
 
@@ -195,6 +210,7 @@ int main(int argc, char ** argv)
 {
     WTLC_Instance * instance = NULL;
     WTLC_Template * templ = NULL;
+    WTLC_Handler handler;
     WTLC_Error error = WTLC_Error_NoError;
     LPCWSTR imagePath = L"C:\\ProgramData\\Microsoft\\User Account Pictures\\guest.png";
     BOOL withImage = PathFileExistsW(imagePath);
@@ -248,6 +264,8 @@ int main(int argc, char ** argv)
     WTLC_Template_setExpiration(templ, 30000);
     if(withImage)
         WTLC_Template_setImagePath(templ, imagePath);
+    /* Actions and Input are mutually exclusive */
+    /* WTLC_Template_addInput(templ); */
     WTLC_Template_addAction(templ, L"Action #0");
     WTLC_Template_addAction(templ, L"Action #1");
 
@@ -267,14 +285,15 @@ int main(int argc, char ** argv)
         return EXIT_FAILURE;
     }
 
-    if(WTLC_showToast(instance,
-                      templ,
-                      &handlerContext,
-                      &OnToastActivated,
-                      &OnToastActivatedAction,
-                      &OnToastDismissed,
-                      &OnToastFailed,
-                      &error) < 0)
+    ZeroMemory(&handler, sizeof(handler));
+    handler.version = WTLC_VERSION;
+    handler.userData = &handlerContext;
+    handler.toastActivated = &OnToastActivated;
+    handler.toastActivatedAction = &OnToastActivatedAction;
+    handler.toastActivatedInput = &OnToastActivatedInput;
+    handler.toastDismissed = &OnToastDismissed;
+    handler.toastFailed = &OnToastFailed;
+    if(WTLC_showToastEx(instance, templ, &handler, &error) < 0)
     {
         MessageBoxW(NULL, WTLC_strerror(error), L"Error", MB_OK | MB_ICONERROR);
         CloseHandle(handlerContext.event);

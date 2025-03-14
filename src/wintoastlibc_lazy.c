@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (C) 2022-2024 WinToastLibC v0.4 - Peter Zhigalov <peter.zhigalov@gmail.com>
+ * Copyright (C) 2022-2025 WinToastLibC v0.5 - Peter Zhigalov <peter.zhigalov@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,8 +31,14 @@
 #if !defined (WTLC_BUILD_LIBRARY)
 #define WTLC_BUILD_LIBRARY
 #endif
+#if !defined (WTLC_DEPRECATED)
+#define WTLC_DEPRECATED
+#endif
 
 #include "wintoastlibc.h"
+
+#include <stdlib.h>
+#include <string.h>
 
 #if !defined (WTLC_DLLNAME)
 #define WTLC_DLLNAME "wintoastlibc.dll"
@@ -110,6 +116,20 @@ static HMODULE s_module = NULL;
 #define FORWARD3(NAME, RTYPE, A1TYPE, A2TYPE, A3TYPE) FORWARD3_HELPER(NAME, RTYPE, return, A1TYPE, A2TYPE, A3TYPE)
 #define FORWARD3NR(NAME, A1TYPE, A2TYPE, A3TYPE) FORWARD3_HELPER(NAME, void, NOARG, A1TYPE, A2TYPE, A3TYPE)
 
+#define FORWARD4_HELPER(NAME, RTYPE, RKEYW, A1TYPE, A2TYPE, A3TYPE, A4TYPE) \
+RTYPE WTLCAPI NAME (A1TYPE a1, A2TYPE a2, A3TYPE a3, A4TYPE a4) { \
+        typedef RTYPE (WTLCAPI * t)(A1TYPE, A2TYPE, A3TYPE, A4TYPE); \
+        t f; \
+        LOAD(h) \
+        f = (t)GetProcAddress(h, #NAME); \
+        SYMCHECK(#NAME, f) \
+        RKEYW f(a1, a2, a3, a4); \
+}
+#define FORWARD4(NAME, RTYPE, A1TYPE, A2TYPE, A3TYPE, A4TYPE) \
+FORWARD4_HELPER(NAME, RTYPE, return, A1TYPE, A2TYPE, A3TYPE, A4TYPE)
+#define FORWARD4NR(NAME, A1TYPE, A2TYPE, A3TYPE, A4TYPE) \
+FORWARD4_HELPER(NAME, void, NOARG, A1TYPE, A2TYPE, A3TYPE, A4TYPE)
+
 #define FORWARD8_HELPER(NAME, RTYPE, RKEYW, A1TYPE, A2TYPE, A3TYPE, A4TYPE, A5TYPE, A6TYPE, A7TYPE, A8TYPE) \
     RTYPE WTLCAPI NAME (A1TYPE a1, A2TYPE a2, A3TYPE a3, A4TYPE a4, A5TYPE a5, A6TYPE a6, A7TYPE a7, A8TYPE a8) { \
         typedef RTYPE (WTLCAPI * t)(A1TYPE, A2TYPE, A3TYPE, A4TYPE, A5TYPE, A6TYPE, A7TYPE, A8TYPE); \
@@ -141,6 +161,7 @@ FORWARD2NR(WTLC_Template_setDuration, WTLC_Template *, WTLC_Duration)
 FORWARD2NR(WTLC_Template_setExpiration, WTLC_Template *, INT64)
 FORWARD2NR(WTLC_Template_setScenario, WTLC_Template *, WTLC_Scenario)
 FORWARD2NR(WTLC_Template_addAction, WTLC_Template *, LPCWSTR)
+FORWARD1NR(WTLC_Template_addInput, WTLC_Template *)
 FORWARD1(WTLC_Template_textFieldsCount, size_t, WTLC_Template *)
 FORWARD1(WTLC_Template_actionsCount, size_t, WTLC_Template *)
 FORWARD1(WTLC_Template_hasImage, BOOL, WTLC_Template *)
@@ -159,6 +180,7 @@ FORWARD1(WTLC_Template_duration, WTLC_Duration, WTLC_Template *)
 FORWARD1(WTLC_Template_isToastGeneric, BOOL, WTLC_Template *)
 FORWARD1(WTLC_Template_isInlineHeroImage, BOOL, WTLC_Template *)
 FORWARD1(WTLC_Template_isCropHintCircle, BOOL, WTLC_Template *)
+FORWARD1(WTLC_Template_isInput, BOOL, WTLC_Template *)
 FORWARD0(WTLC_Instance_Create, WTLC_Instance *)
 FORWARD1NR(WTLC_Instance_Destroy, WTLC_Instance *)
 FORWARD0(WTLC_isCompatible, BOOL)
@@ -169,6 +191,7 @@ FORWARD2(WTLC_initialize, BOOL, WTLC_Instance *, WTLC_Error *)
 FORWARD1(WTLC_isInitialized, BOOL, WTLC_Instance *)
 FORWARD2(WTLC_hideToast, BOOL, WTLC_Instance *, INT64)
 FORWARD8(WTLC_showToast, INT64, WTLC_Instance *, WTLC_Template *, void *, WTLC_CB_toastActivated, WTLC_CB_toastActivatedAction, WTLC_CB_toastDismissed, WTLC_CB_toastFailed, WTLC_Error *)
+FORWARD4(WTLC_showToastEx, INT64, WTLC_Instance *, WTLC_Template *, WTLC_Handler *, WTLC_Error *)
 FORWARD1NR(WTLC_clear, WTLC_Instance *)
 FORWARD1(WTLC_createShortcut, WTLC_ShortcutResult, WTLC_Instance *)
 FORWARD1(WTLC_appName, LPCWSTR, WTLC_Instance *)
@@ -176,3 +199,4 @@ FORWARD1(WTLC_appUserModelId, LPCWSTR, WTLC_Instance *)
 FORWARD2NR(WTLC_setAppUserModelId, WTLC_Instance *, LPCWSTR)
 FORWARD2NR(WTLC_setAppName, WTLC_Instance *, LPCWSTR)
 FORWARD2NR(WTLC_setShortcutPolicy, WTLC_Instance *, WTLC_ShortcutPolicy)
+FORWARD0(WTLC_runtimeVersion, UINT64)

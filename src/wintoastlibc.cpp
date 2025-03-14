@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (C) 2022-2024 WinToastLibC v0.4 - Peter Zhigalov <peter.zhigalov@gmail.com>
+ * Copyright (C) 2022-2025 WinToastLibC v0.5 - Peter Zhigalov <peter.zhigalov@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,9 @@
 
 #include "wintoastlibc.h"
 #include "wintoastlib.h"
+
+#include <algorithm>
+#include <string>
 
 struct _WTLC_Template
 {
@@ -79,7 +82,7 @@ WTLC_Template * WTLCAPI WTLC_Template_Create(_In_ WTLC_TemplateType type)
     }
 }
 
-void WTLCAPI WTLC_Template_Destroy(_In_ WTLC_Template * toast)
+void WTLCAPI WTLC_Template_Destroy(_Inout_ WTLC_Template * toast)
 {
     try
     {
@@ -89,7 +92,7 @@ void WTLCAPI WTLC_Template_Destroy(_In_ WTLC_Template * toast)
     {}
 }
 
-void WTLCAPI WTLC_Template_setFirstLine(_In_ WTLC_Template * toast, _In_ LPCWSTR text)
+void WTLCAPI WTLC_Template_setFirstLine(_Inout_ WTLC_Template * toast, _In_ LPCWSTR text)
 {
     try
     {
@@ -100,7 +103,7 @@ void WTLCAPI WTLC_Template_setFirstLine(_In_ WTLC_Template * toast, _In_ LPCWSTR
     {}
 }
 
-void WTLCAPI WTLC_Template_setSecondLine(_In_ WTLC_Template * toast, _In_ LPCWSTR text)
+void WTLCAPI WTLC_Template_setSecondLine(_Inout_ WTLC_Template * toast, _In_ LPCWSTR text)
 {
     try
     {
@@ -111,7 +114,7 @@ void WTLCAPI WTLC_Template_setSecondLine(_In_ WTLC_Template * toast, _In_ LPCWST
     {}
 }
 
-void WTLCAPI WTLC_Template_setThirdLine(_In_ WTLC_Template * toast, _In_ LPCWSTR text)
+void WTLCAPI WTLC_Template_setThirdLine(_Inout_ WTLC_Template * toast, _In_ LPCWSTR text)
 {
     try
     {
@@ -122,7 +125,7 @@ void WTLCAPI WTLC_Template_setThirdLine(_In_ WTLC_Template * toast, _In_ LPCWSTR
     {}
 }
 
-void WTLCAPI WTLC_Template_setTextField(_In_ WTLC_Template * toast, _In_ LPCWSTR txt, _In_ WTLC_TextField pos)
+void WTLCAPI WTLC_Template_setTextField(_Inout_ WTLC_Template * toast, _In_ LPCWSTR txt, _In_ WTLC_TextField pos)
 {
     try
     {
@@ -145,7 +148,7 @@ void WTLCAPI WTLC_Template_setTextField(_In_ WTLC_Template * toast, _In_ LPCWSTR
     {}
 }
 
-void WTLCAPI WTLC_Template_setAttributionText(_In_ WTLC_Template * toast, _In_ LPCWSTR attributionText)
+void WTLCAPI WTLC_Template_setAttributionText(_Inout_ WTLC_Template * toast, _In_ LPCWSTR attributionText)
 {
     try
     {
@@ -156,7 +159,7 @@ void WTLCAPI WTLC_Template_setAttributionText(_In_ WTLC_Template * toast, _In_ L
     {}
 }
 
-void WTLCAPI WTLC_Template_setImagePath(_In_ WTLC_Template * toast, _In_ LPCWSTR imgPath)
+void WTLCAPI WTLC_Template_setImagePath(_Inout_ WTLC_Template * toast, _In_ LPCWSTR imgPath)
 {
     try
     {
@@ -167,7 +170,7 @@ void WTLCAPI WTLC_Template_setImagePath(_In_ WTLC_Template * toast, _In_ LPCWSTR
     {}
 }
 
-void WTLCAPI WTLC_Template_setImagePathWithCropHint(_In_ WTLC_Template * toast, _In_ LPCWSTR imgPath, _In_ WTLC_CropHint cropHint)
+void WTLCAPI WTLC_Template_setImagePathWithCropHint(_Inout_ WTLC_Template * toast, _In_ LPCWSTR imgPath, _In_ WTLC_CropHint cropHint)
 {
     try
     {
@@ -189,7 +192,7 @@ void WTLCAPI WTLC_Template_setImagePathWithCropHint(_In_ WTLC_Template * toast, 
     {}
 }
 
-void WTLCAPI WTLC_Template_setHeroImagePath(_In_ WTLC_Template * toast, _In_ LPCWSTR imgPath, _In_ BOOL inlineImage)
+void WTLCAPI WTLC_Template_setHeroImagePath(_Inout_ WTLC_Template * toast, _In_ LPCWSTR imgPath, _In_ BOOL inlineImage)
 {
     try
     {
@@ -200,7 +203,7 @@ void WTLCAPI WTLC_Template_setHeroImagePath(_In_ WTLC_Template * toast, _In_ LPC
     {}
 }
 
-void WTLCAPI WTLC_Template_setAudioSystemFile(_In_ WTLC_Template * toast, _In_ WTLC_AudioSystemFile audio)
+void WTLCAPI WTLC_Template_setAudioSystemFile(_Inout_ WTLC_Template * toast, _In_ WTLC_AudioSystemFile audio)
 {
     try
     {
@@ -246,7 +249,7 @@ void WTLCAPI WTLC_Template_setAudioSystemFile(_In_ WTLC_Template * toast, _In_ W
     {}
 }
 
-void WTLCAPI WTLC_Template_setAudioPath(_In_ WTLC_Template * toast, _In_ LPCWSTR audioPath)
+void WTLCAPI WTLC_Template_setAudioPath(_Inout_ WTLC_Template * toast, _In_ LPCWSTR audioPath)
 {
     try
     {
@@ -257,7 +260,7 @@ void WTLCAPI WTLC_Template_setAudioPath(_In_ WTLC_Template * toast, _In_ LPCWSTR
     {}
 }
 
-void WTLCAPI WTLC_Template_setAudioOption(_In_ WTLC_Template * toast, _In_ WTLC_AudioOption audioOption)
+void WTLCAPI WTLC_Template_setAudioOption(_Inout_ WTLC_Template * toast, _In_ WTLC_AudioOption audioOption)
 {
     try
     {
@@ -280,7 +283,7 @@ void WTLCAPI WTLC_Template_setAudioOption(_In_ WTLC_Template * toast, _In_ WTLC_
     {}
 }
 
-void WTLCAPI WTLC_Template_setDuration(_In_ WTLC_Template * toast, _In_ WTLC_Duration duration)
+void WTLCAPI WTLC_Template_setDuration(_Inout_ WTLC_Template * toast, _In_ WTLC_Duration duration)
 {
     try
     {
@@ -303,7 +306,7 @@ void WTLCAPI WTLC_Template_setDuration(_In_ WTLC_Template * toast, _In_ WTLC_Dur
     {}
 }
 
-void WTLCAPI WTLC_Template_setExpiration(_In_ WTLC_Template * toast, _In_ INT64 millisecondsFromNow)
+void WTLCAPI WTLC_Template_setExpiration(_Inout_ WTLC_Template * toast, _In_ INT64 millisecondsFromNow)
 {
     try
     {
@@ -314,7 +317,7 @@ void WTLCAPI WTLC_Template_setExpiration(_In_ WTLC_Template * toast, _In_ INT64 
     {}
 }
 
-void WTLCAPI WTLC_Template_setScenario(_In_ WTLC_Template * toast, _In_ WTLC_Scenario scenario)
+void WTLCAPI WTLC_Template_setScenario(_Inout_ WTLC_Template * toast, _In_ WTLC_Scenario scenario)
 {
     try
     {
@@ -338,12 +341,23 @@ void WTLCAPI WTLC_Template_setScenario(_In_ WTLC_Template * toast, _In_ WTLC_Sce
     {}
 }
 
-void WTLCAPI WTLC_Template_addAction(_In_ WTLC_Template * toast, _In_ LPCWSTR label)
+void WTLCAPI WTLC_Template_addAction(_Inout_ WTLC_Template * toast, _In_ LPCWSTR label)
 {
     try
     {
         if(toast)
             toast->data().addAction(label);
+    }
+    catch(...)
+    {}
+}
+
+void WTLCAPI WTLC_Template_addInput(_Inout_ WTLC_Template * toast)
+{
+    try
+    {
+        if(toast)
+            toast->data().addInput();
     }
     catch(...)
     {}
@@ -621,6 +635,18 @@ BOOL WTLCAPI WTLC_Template_isCropHintCircle(_In_ WTLC_Template * toast)
     return FALSE;
 }
 
+BOOL WTLCAPI WTLC_Template_isInput(_In_ WTLC_Template * toast)
+{
+    try
+    {
+        if(toast)
+            return toast->data().isInput();
+    }
+    catch(...)
+    {}
+    return FALSE;
+}
+
 struct _WTLC_Instance
 {
     _WTLC_Instance()
@@ -635,7 +661,7 @@ private:
     WinToastLib::WinToast _instance;
 };
 
-WTLC_Instance * WTLCAPI WTLC_Instance_Create()
+WTLC_Instance * WTLCAPI WTLC_Instance_Create(void)
 {
     try
     {
@@ -647,7 +673,7 @@ WTLC_Instance * WTLCAPI WTLC_Instance_Create()
     }
 }
 
-void WTLCAPI WTLC_Instance_Destroy(_In_ WTLC_Instance * instance)
+void WTLCAPI WTLC_Instance_Destroy(_Inout_ WTLC_Instance * instance)
 {
     try
     {
@@ -657,7 +683,7 @@ void WTLCAPI WTLC_Instance_Destroy(_In_ WTLC_Instance * instance)
     {}
 }
 
-BOOL WTLCAPI WTLC_isCompatible()
+BOOL WTLCAPI WTLC_isCompatible(void)
 {
     try
     {
@@ -669,7 +695,7 @@ BOOL WTLCAPI WTLC_isCompatible()
     }
 }
 
-BOOL WTLCAPI WTLC_isSupportingModernFeatures()
+BOOL WTLCAPI WTLC_isSupportingModernFeatures(void)
 {
     try
     {
@@ -681,7 +707,7 @@ BOOL WTLCAPI WTLC_isSupportingModernFeatures()
     }
 }
 
-BOOL WTLCAPI WTLC_isWin10AnniversaryOrHigher()
+BOOL WTLCAPI WTLC_isWin10AnniversaryOrHigher(void)
 {
     try
     {
@@ -744,7 +770,7 @@ static WTLC_Error convertError(WinToastLib::WinToast::WinToastError error)
     return static_cast<WTLC_Error>(error);
 }
 
-BOOL WTLCAPI WTLC_initialize(_In_ WTLC_Instance * instance, _Out_opt_ WTLC_Error * error)
+BOOL WTLCAPI WTLC_initialize(_Inout_ WTLC_Instance * instance, _Out_opt_ WTLC_Error * error)
 {
     try
     {
@@ -780,7 +806,7 @@ BOOL WTLCAPI WTLC_isInitialized(_In_ WTLC_Instance * instance)
     return FALSE;
 }
 
-BOOL WTLCAPI WTLC_hideToast(_In_ WTLC_Instance * instance, _In_ INT64 id)
+BOOL WTLCAPI WTLC_hideToast(_Inout_ WTLC_Instance * instance, _In_ INT64 id)
 {
     try
     {
@@ -794,31 +820,59 @@ BOOL WTLCAPI WTLC_hideToast(_In_ WTLC_Instance * instance, _In_ INT64 id)
 
 namespace {
 
+const UINT64 TOAST_ACTIVATED_INPUT_VERSION = WTLC_MAKE_VERSION(0, 5, 0);
+
 class CustomHandler : public WinToastLib::IWinToastHandler
 {
 public:
-    CustomHandler(_In_opt_ void * userData,
-                  _In_opt_ WTLC_CB_toastActivated toastActivated,
-                  _In_opt_ WTLC_CB_toastActivatedAction toastActivatedAction,
-                  _In_opt_ WTLC_CB_toastDismissed toastDismissed,
-                  _In_opt_ WTLC_CB_toastFailed toastFailed)
-        : m_userData(userData)
-        , m_toastActivated(toastActivated)
-        , m_toastActivatedAction(toastActivatedAction)
-        , m_toastDismissed(toastDismissed)
-        , m_toastFailed(toastFailed)
-    {}
+    CustomHandler(_In_opt_ WTLC_Handler * handler)
+    {
+        ZeroMemory(&m_handler, sizeof(m_handler));
+        if(handler)
+        {
+            m_handler.version = handler->version;
+            m_handler.userData = handler->userData;
+            m_handler.toastActivated = handler->toastActivated;
+            m_handler.toastActivatedAction = handler->toastActivatedAction;
+            m_handler.toastDismissed = handler->toastDismissed;
+            m_handler.toastFailed = handler->toastFailed;
+            if(m_handler.version >= TOAST_ACTIVATED_INPUT_VERSION)
+                m_handler.toastActivatedInput = handler->toastActivatedInput;
+        }
+    }
 
     void toastActivated() const override
     {
-        if(m_toastActivated)
-            m_toastActivated(m_userData);
+        if(m_handler.toastActivated)
+            m_handler.toastActivated(m_handler.userData);
     }
 
     void toastActivated(int actionIndex) const override
     {
-        if(m_toastActivatedAction)
-            m_toastActivatedAction(m_userData, actionIndex);
+        if(m_handler.toastActivatedAction)
+            m_handler.toastActivatedAction(m_handler.userData, actionIndex);
+    }
+
+    void toastActivated(const char * response) const override
+    {
+        if(m_handler.version >= TOAST_ACTIVATED_INPUT_VERSION)
+        {
+            if(m_handler.toastActivatedInput)
+            {
+                /// @todo Unicode input is not supported in WinToast 1.3.1
+                /// https://github.com/mohabouje/WinToast/blob/v1.3.1/src/wintoastlib.cpp#L338-L342
+                /// https://github.com/mohabouje/WinToast/pull/113
+                std::string str(response);
+                std::wstring wstr(str.length(), L' ');
+                std::copy(str.begin(), str.end(), wstr.begin());
+                m_handler.toastActivatedInput(m_handler.userData, wstr.c_str());
+            }
+        }
+        else
+        {
+            if(m_handler.toastActivatedAction)
+                m_handler.toastActivatedAction(m_handler.userData, 0);
+        }
     }
 
     void toastDismissed(WinToastLib::IWinToastHandler::WinToastDismissalReason state) const override
@@ -835,27 +889,23 @@ public:
             _state = static_cast<WTLC_DismissalReason>(state);
             break;
         }
-        if(m_toastDismissed)
-            m_toastDismissed(m_userData, _state);
+        if(m_handler.toastDismissed)
+            m_handler.toastDismissed(m_handler.userData, _state);
     }
 
     void toastFailed() const override
     {
-        if(m_toastFailed)
-            m_toastFailed(m_userData);
+        if(m_handler.toastFailed)
+            m_handler.toastFailed(m_handler.userData);
     }
 
 private:
-    void * m_userData;
-    WTLC_CB_toastActivated m_toastActivated;
-    WTLC_CB_toastActivatedAction m_toastActivatedAction;
-    WTLC_CB_toastDismissed m_toastDismissed;
-    WTLC_CB_toastFailed m_toastFailed;
+    WTLC_Handler m_handler;
 };
 
 }
 
-INT64 WTLCAPI WTLC_showToast(_In_ WTLC_Instance * instance,
+INT64 WTLCAPI WTLC_showToast(_Inout_ WTLC_Instance * instance,
                              _In_ WTLC_Template * toast,
                              _In_opt_ void * userData,
                              _In_opt_ WTLC_CB_toastActivated toastActivated,
@@ -866,11 +916,32 @@ INT64 WTLCAPI WTLC_showToast(_In_ WTLC_Instance * instance,
 {
     try
     {
+        WTLC_Handler handler;
+        ZeroMemory(&handler, sizeof(handler));
+        handler.version = TOAST_ACTIVATED_INPUT_VERSION - 1;
+        handler.userData = userData;
+        handler.toastActivated = toastActivated;
+        handler.toastActivatedAction = toastActivatedAction;
+        handler.toastDismissed = toastDismissed;
+        handler.toastFailed = toastFailed;
+        return WTLC_showToastEx(instance, toast, &handler, error);
+    }
+    catch(...)
+    {}
+    return -1;
+}
+
+INT64 WTLCAPI WTLC_showToastEx(_Inout_ WTLC_Instance * instance,
+                               _In_ WTLC_Template * toast,
+                               _In_opt_ WTLC_Handler * handler,
+                               _Out_opt_ WTLC_Error * error)
+{
+    try
+    {
         if(instance)
         {
             WinToastLib::WinToast::WinToastError _error = WinToastLib::WinToast::NoError;
-            CustomHandler * handler = new CustomHandler(userData, toastActivated, toastActivatedAction, toastDismissed, toastFailed);
-            const INT64 result = instance->data().showToast(toast->data(), handler, &_error);
+            const INT64 result = instance->data().showToast(toast->data(), new CustomHandler(handler), &_error);
             if(error)
                 *error = convertError(_error);
             return result;
@@ -881,7 +952,7 @@ INT64 WTLCAPI WTLC_showToast(_In_ WTLC_Instance * instance,
     return -1;
 }
 
-void WTLCAPI WTLC_clear(_In_ WTLC_Instance * instance)
+void WTLCAPI WTLC_clear(_Inout_ WTLC_Instance * instance)
 {
     try
     {
@@ -892,7 +963,7 @@ void WTLCAPI WTLC_clear(_In_ WTLC_Instance * instance)
     {}
 }
 
-WTLC_ShortcutResult WTLCAPI WTLC_createShortcut(_In_ WTLC_Instance * instance)
+WTLC_ShortcutResult WTLCAPI WTLC_createShortcut(_Inout_ WTLC_Instance * instance)
 {
     try
     {
@@ -943,7 +1014,7 @@ LPCWSTR WTLCAPI WTLC_appUserModelId(_In_ WTLC_Instance * instance)
     return NULL;
 }
 
-void WTLCAPI WTLC_setAppUserModelId(_In_ WTLC_Instance * instance, _In_ LPCWSTR aumi)
+void WTLCAPI WTLC_setAppUserModelId(_Inout_ WTLC_Instance * instance, _In_ LPCWSTR aumi)
 {
     try
     {
@@ -954,7 +1025,7 @@ void WTLCAPI WTLC_setAppUserModelId(_In_ WTLC_Instance * instance, _In_ LPCWSTR 
     {}
 }
 
-void WTLCAPI WTLC_setAppName(_In_ WTLC_Instance * instance, _In_ LPCWSTR appName)
+void WTLCAPI WTLC_setAppName(_Inout_ WTLC_Instance * instance, _In_ LPCWSTR appName)
 {
     try
     {
@@ -965,7 +1036,7 @@ void WTLCAPI WTLC_setAppName(_In_ WTLC_Instance * instance, _In_ LPCWSTR appName
     {}
 }
 
-void WTLCAPI WTLC_setShortcutPolicy(_In_ WTLC_Instance * instance, _In_ WTLC_ShortcutPolicy policy)
+void WTLCAPI WTLC_setShortcutPolicy(_Inout_ WTLC_Instance * instance, _In_ WTLC_ShortcutPolicy policy)
 {
     try
     {
@@ -987,4 +1058,9 @@ void WTLCAPI WTLC_setShortcutPolicy(_In_ WTLC_Instance * instance, _In_ WTLC_Sho
     }
     catch(...)
     {}
+}
+
+UINT64 WTLCAPI WTLC_runtimeVersion(void)
+{
+    return WTLC_VERSION;
 }

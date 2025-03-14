@@ -46,7 +46,7 @@ int main(int argc, char ** argv)
 
     templ = WTLC_Template_Create(WTLC_TemplateType_Text01);
     WTLC_Template_setFirstLine(templ, L"HELLO, WORLD!");
-    if(WTLC_showToast(instance, templ, NULL, NULL, NULL, NULL, NULL, &error) < 0)
+    if(WTLC_showToastEx(instance, templ, NULL, &error) < 0)
     {
         MessageBoxW(NULL, WTLC_strerror(error), L"Error", MB_OK | MB_ICONERROR);
         ret = EXIT_FAILURE;
