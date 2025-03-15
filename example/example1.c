@@ -53,7 +53,7 @@ int main(int argc, char ** argv)
         goto cleanup;
     }
 
-    Sleep(1000);
+    Sleep(5000);
 
 cleanup:
     WTLC_Template_Destroy(templ);
