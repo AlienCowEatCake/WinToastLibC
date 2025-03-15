@@ -35,9 +35,6 @@
 #include "wintoastlibc.h"
 #include "wintoastlib.h"
 
-#include <algorithm>
-#include <string>
-
 struct _WTLC_Template
 {
     _WTLC_Template(WinToastLib::WinToastTemplate::WinToastTemplateType type)
@@ -853,20 +850,12 @@ public:
             m_handler.toastActivatedAction(m_handler.userData, actionIndex);
     }
 
-    void toastActivated(const char * response) const override
+    void toastActivated(std::wstring response) const override
     {
         if(m_handler.version >= TOAST_ACTIVATED_INPUT_VERSION)
         {
             if(m_handler.toastActivatedInput)
-            {
-                /// @todo Unicode input is not supported in WinToast 1.3.1
-                /// https://github.com/mohabouje/WinToast/blob/v1.3.1/src/wintoastlib.cpp#L338-L342
-                /// https://github.com/mohabouje/WinToast/pull/113
-                std::string str(response);
-                std::wstring wstr(str.length(), L' ');
-                std::copy(str.begin(), str.end(), wstr.begin());
-                m_handler.toastActivatedInput(m_handler.userData, wstr.c_str());
-            }
+                m_handler.toastActivatedInput(m_handler.userData, response.c_str());
         }
         else
         {
