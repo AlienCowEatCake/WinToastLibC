@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (C) 2022-2025 WinToastLibC v0.5 - Peter Zhigalov <peter.zhigalov@gmail.com>
+ * Copyright (C) 2022-2025 WinToastLibC v0.6 - Peter Zhigalov <peter.zhigalov@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -144,6 +144,7 @@ static HMODULE s_module = NULL;
 #define FORWARD8NR(NAME, A1TYPE, A2TYPE, A3TYPE, A4TYPE, A5TYPE, A6TYPE, A7TYPE, A8TYPE) \
     FORWARD8_HELPER(NAME, void, NOARG, A1TYPE, A2TYPE, A3TYPE, A4TYPE, A5TYPE, A6TYPE, A7TYPE, A8TYPE)
 
+FORWARD1NR(WTLC_setDebugOutputEnabled, BOOL)
 FORWARD1(WTLC_Template_Create, WTLC_Template *, WTLC_TemplateType)
 FORWARD1NR(WTLC_Template_Destroy, WTLC_Template *)
 FORWARD2NR(WTLC_Template_setFirstLine, WTLC_Template *, LPCWSTR)

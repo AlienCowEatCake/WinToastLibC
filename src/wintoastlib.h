@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (C) 2016-2023 WinToast v1.3.0 - Mohammed Boujemaoui <mohabouje@gmail.com>
+ * Copyright (C) 2016-2025 WinToast v1.3.2 - Mohammed Boujemaoui <mohabouje@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -51,6 +51,8 @@ using namespace ABI::Windows::UI::Notifications;
 using namespace Windows::Foundation;
 
 namespace WinToastLib {
+
+    void setDebugOutputEnabled(bool enabled);
 
     class IWinToastHandler {
     public:
@@ -238,7 +240,7 @@ namespace WinToastLib {
 
     protected:
         struct NotifyData {
-            NotifyData(){};
+            NotifyData() {};
             NotifyData(_In_ ComPtr<IToastNotification> notify, _In_ EventRegistrationToken activatedToken,
                        _In_ EventRegistrationToken dismissedToken, _In_ EventRegistrationToken failedToken) :
                 _notify(notify), _activatedToken(activatedToken), _dismissedToken(dismissedToken), _failedToken(failedToken) {}

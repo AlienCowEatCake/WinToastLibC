@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (C) 2022-2025 WinToastLibC v0.5 - Peter Zhigalov <peter.zhigalov@gmail.com>
+ * Copyright (C) 2022-2025 WinToastLibC v0.6 - Peter Zhigalov <peter.zhigalov@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,16 @@
 
 #include "wintoastlibc.h"
 #include "wintoastlib.h"
+
+void WTLCAPI WTLC_setDebugOutputEnabled(BOOL enabled)
+{
+    try
+    {
+        WinToastLib::setDebugOutputEnabled(enabled);
+    }
+    catch(...)
+    {}
+}
 
 struct _WTLC_Template
 {

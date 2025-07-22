@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (C) 2022-2025 WinToastLibC v0.5 - Peter Zhigalov <peter.zhigalov@gmail.com>
+ * Copyright (C) 2022-2025 WinToastLibC v0.6 - Peter Zhigalov <peter.zhigalov@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
 #include <string.h>
 
 #define WTLC_VERSION_MAJOR 0
-#define WTLC_VERSION_MINOR 5
+#define WTLC_VERSION_MINOR 6
 #define WTLC_VERSION_PATCH 0
 
 #define WTLC_MAKE_VERSION(major, minor, patch) ((UINT64)((((UINT64)(major)) << 16) | (((UINT64)(minor)) << 8) | ((UINT64)(patch))))
@@ -81,6 +81,9 @@
 #if defined (__cplusplus)
 extern "C" {
 #endif
+
+/* Since WinToastLibC v0.6.0 / WinToast v1.3.2 */
+WTLC_LIB void WTLCAPI WTLC_setDebugOutputEnabled(_In_ BOOL enabled);
 
 enum _WTLC_DismissalReason
 {
