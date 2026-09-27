@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (C) 2022-2025 WinToastLibC v0.6 - Peter Zhigalov <peter.zhigalov@gmail.com>
+ * Copyright (C) 2022-2026 WinToastLibC v0.7 - Peter Zhigalov <peter.zhigalov@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
 #include <string.h>
 
 #define WTLC_VERSION_MAJOR 0
-#define WTLC_VERSION_MINOR 6
+#define WTLC_VERSION_MINOR 7
 #define WTLC_VERSION_PATCH 0
 
 #define WTLC_MAKE_VERSION(major, minor, patch) ((UINT64)((((UINT64)(major)) << 16) | (((UINT64)(minor)) << 8) | ((UINT64)(patch))))

@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (C) 2022-2025 WinToastLibC v0.6 - Peter Zhigalov <peter.zhigalov@gmail.com>
+ * Copyright (C) 2022-2026 WinToastLibC v0.7 - Peter Zhigalov <peter.zhigalov@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal

@@ -44,13 +44,13 @@
 #include <map>
 #include <memory>
 
-using namespace Microsoft::WRL;
-using namespace ABI::Windows::Data::Xml::Dom;
-using namespace ABI::Windows::Foundation;
-using namespace ABI::Windows::UI::Notifications;
-using namespace Windows::Foundation;
-
 namespace WinToastLib {
+
+    using namespace Microsoft::WRL;
+    using namespace ABI::Windows::Data::Xml::Dom;
+    using namespace ABI::Windows::Foundation;
+    using namespace ABI::Windows::UI::Notifications;
+    using namespace Windows::Foundation;
 
     void setDebugOutputEnabled(bool enabled);
 
@@ -216,6 +216,12 @@ namespace WinToastLib {
 
         WinToast(void);
         virtual ~WinToast();
+
+        WinToast(const WinToast&) = delete;
+        WinToast& operator=(const WinToast&) = delete;
+        WinToast(WinToast&&) = delete;
+        WinToast& operator=(WinToast&&) = delete;
+
         static WinToast* instance();
         static bool isCompatible();
         static bool isSupportingModernFeatures();
